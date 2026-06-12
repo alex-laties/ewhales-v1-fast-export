@@ -1,0 +1,52 @@
+{
+  "csv_output_name": "users_export.csv",
+  "database": "testdb",
+  "host": "localhost",
+  "ids_to_fieds": {
+    "bottom": "Bottom",
+    "cloud_cover": "Cloud Cover",
+    "depth": "Depth",
+    "depth_unit": "Depth Unit",
+    "entry_date": "Entry Date",
+    "landmark": "Landmark",
+    "latitude": "Latitude",
+    "local_time": "Local Time",
+    "logbook_id": "LogBook ID",
+    "longitude": "Longitude",
+    "page": "Page",
+    "post_id": "ID",
+    "sea_state": "Sea State",
+    "ship_heading": "Ship Heading/Course",
+    "ship_sightings": "Ship Sightings",
+    "wind_direction": "Wind Direction",
+    "wind_force": "Wind Speed/Force"
+  },
+  "post_type_to_meta_keys": {
+    "logbook": [
+      "logbook_id"
+    ],
+    "logbook_entry": [
+      "bottom",
+      "cloud_cover",
+      "depth",
+      "depth_unit",
+      "entry_date",
+      "landmark",
+      "latitude",
+      "local_time",
+      "logbook_id",
+      "longitude",
+      "page",
+      "post_id",
+      "sea_state",
+      "ship_heading",
+      "ship_sightings",
+      "wind_direction",
+      "wind_force"
+    ]
+  },
+  "password": "password",
+  "port": 3306,
+  "table": "logswp_postmeta",
+  "username": "root"
+}
