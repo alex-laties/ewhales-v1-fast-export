@@ -40,7 +40,7 @@ The Golang exporter uses `config.json` to define database connection credentials
 
 ### Generating Test Data
 
-`query_test.go` uses sql dump files (e.g. `test_multiple_logbook_logbook_entries.sql`) to generate test data.
+`query_test.go` uses sql dump files (e.g. `test_simple.sql`) to generate test data.
 
 The following query can be used to extract test data from the live database and save it to a sql file. It is recommended to limit the number of logbooks to a small number for testing purposes. Replace `limit 10` with a larger number to increase the amount of data extracted or specify specific logbooks by replacing `limit 10` with `and where meta_value in ("logbook-name-1", "logbook-name-2")`. The query can look for as many logbooks as you'd like, e.g. `and where meta_value in ("Westward-1978-1979", "A. Houghton (bark) 1853-1857", "T. A. Spofford (bark) 1851-1855")`. Just keep in mind that some logbooks have more entries than others.
 
