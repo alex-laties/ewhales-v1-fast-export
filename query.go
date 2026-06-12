@@ -20,10 +20,21 @@ type PivotData struct {
 // and database timeouts. It returns the central PivotData structure.
 func QueryPivotData(db *sql.DB, config *Config) (*PivotData, error) {
 	log.Println("Fetching distinct post_ids...")
-	rows, err := db.Query(fmt.Sprintf("SELECT DISTINCT post_id FROM %s WHERE meta_key = 'logbook_id'", config.Table))
+	postIDs, err := getDistinctPostIDs(db, config.Table)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching post IDs: %v", err)
 	}
+
+	log.Printf("Found %d distinct post_ids to process.", len(postIDs))
+	return processBatches(db, config, postIDs)
+}
+
+func getDistinctPostIDs(db *sql.DB, tableName string) ([]uint, error) {
+	rows, err := db.Query(fmt.Sprintf("SELECT DISTINCT post_id FROM %s WHERE meta_key = 'logbook_id'", tableName))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
 	var postIDs []uint
 	for rows.Next() {
@@ -33,10 +44,11 @@ func QueryPivotData(db *sql.DB, config *Config) (*PivotData, error) {
 		}
 		postIDs = append(postIDs, id)
 	}
-	rows.Close()
 
-	log.Printf("Found %d distinct post_ids to process.", len(postIDs))
+	return postIDs, nil
+}
 
+func processBatches(db *sql.DB, config *Config, postIDs []uint) (*PivotData, error) {
 	batchSize := 100
 	var pivotData PivotData
 
@@ -127,6 +139,7 @@ func QueryPivotData(db *sql.DB, config *Config) (*PivotData, error) {
 			var metaValue sql.NullString
 
 			if err := rows.Scan(&postID, &metaKey, &metaValue); err != nil {
+				rows.Close()
 				return nil, fmt.Errorf("error scanning row: %v", err)
 			}
 
