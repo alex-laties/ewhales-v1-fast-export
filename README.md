@@ -69,3 +69,29 @@ You can anonymize the file using the provided `anonymize.py` script. This script
 # Usage: python3 anonymize.py <input.sql> <output.sql>
 python3 anonymize.py test_data.sql test_data_anon.sql
 ```
+
+## Docker Usage
+
+If you prefer not to install Go or Python on your local machine, you can run all the tools seamlessly via Docker.
+
+### 1. Build the Docker Image
+```bash
+docker build -t ewhales-tools .
+```
+
+### 2. Running the Tools
+Mount your current directory (containing your `config.json` or `.sql` files) into the `/app` working directory of the container.
+
+**Run the Golang Exporter:**
+```bash
+docker run --rm -v $(pwd):/app -it ewhales-tools exporter -progress -config config.json
+```
+
+**Run the Python Converters:**
+```bash
+docker run --rm -v $(pwd):/app -it ewhales-tools python3 /usr/local/bin/convert_inserts.py input.sql output.sql 5000
+```
+
+```bash
+docker run --rm -v $(pwd):/app -it ewhales-tools python3 /usr/local/bin/anonymize.py test_data.sql test_data_anon.sql
+```
