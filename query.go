@@ -18,7 +18,7 @@ type PivotData struct {
 // QueryPivotData performs the database interactions to extract and pivot the EAV data.
 // It fetches all relevant post_ids first, then batches them to avoid high memory spikes
 // and database timeouts. It returns the central PivotData structure.
-func QueryPivotData(db *sql.DB, config *Config) (*PivotData, error) {
+func QueryPivotData(db *sql.DB, config *Config, onProgress func(processed int, total int)) (*PivotData, error) {
 	log.Println("Fetching distinct post_ids...")
 	postIDs, err := getDistinctPostIDs(db, config.Table)
 	if err != nil {
@@ -26,7 +26,7 @@ func QueryPivotData(db *sql.DB, config *Config) (*PivotData, error) {
 	}
 
 	log.Printf("Found %d distinct post_ids to process.", len(postIDs))
-	return processBatches(db, config, postIDs)
+	return processBatches(db, config, postIDs, onProgress)
 }
 
 func getDistinctPostIDs(db *sql.DB, tableName string) ([]uint, error) {
@@ -48,7 +48,7 @@ func getDistinctPostIDs(db *sql.DB, tableName string) ([]uint, error) {
 	return postIDs, nil
 }
 
-func processBatches(db *sql.DB, config *Config, postIDs []uint) (*PivotData, error) {
+func processBatches(db *sql.DB, config *Config, postIDs []uint, onProgress func(processed int, total int)) (*PivotData, error) {
 	batchSize := 100
 	var pivotData PivotData
 
@@ -156,7 +156,11 @@ func processBatches(db *sql.DB, config *Config, postIDs []uint) (*PivotData, err
 		processEntity(currentPostID, entityProps)
 		rows.Close()
 
-		log.Printf("Processed batch %d to %d (out of %d)", i+1, end, len(postIDs))
+		if onProgress != nil {
+			onProgress(end, len(postIDs))
+		} else {
+			log.Printf("Processed batch %d to %d (out of %d)", i+1, end, len(postIDs))
+		}
 	}
 
 	log.Printf("Found %d Logbooks and %d Logbook Entries", len(pivotData.Logbooks), len(pivotData.LogbookEntries))

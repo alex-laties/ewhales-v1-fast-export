@@ -10,7 +10,7 @@ import (
 // We are documenting this to show how easy it is to add a JSONSerializer, XMLSerializer, etc.
 // The main application logic will rely on this interface to decouple querying from output formatting.
 type Serializer interface {
-	Serialize(data PivotData) error
+	Serialize(data PivotData, onProgress func(processed int, total int)) error
 }
 
 // CSVSerializer implements Serializer for CSV format.
@@ -23,7 +23,9 @@ type CSVSerializer struct {
 // Serialize writes the PivotData out to CSV files.
 // It uses IdsToFields to map internal struct names to user-friendly headers.
 // It also maps LogbookEntry LogbookIDs to their corresponding Logbook string names.
-func (s *CSVSerializer) Serialize(data PivotData) error {
+func (s *CSVSerializer) Serialize(data PivotData, onProgress func(processed int, total int)) error {
+	totalItems := len(data.Logbooks) + len(data.LogbookEntries)
+	processed := 0
 	// Build Logbook mapping for entries
 	logbookNameMap := make(map[uint]string)
 	for _, lb := range data.Logbooks {
@@ -52,6 +54,10 @@ func (s *CSVSerializer) Serialize(data PivotData) error {
 	for _, lb := range data.Logbooks {
 		if err := lbWriter.Write([]string{fmt.Sprint(lb.PostID), lb.LogbookID}); err != nil {
 			return err
+		}
+		processed++
+		if onProgress != nil {
+			onProgress(processed, totalItems)
 		}
 	}
 	lbWriter.Flush()
@@ -91,6 +97,10 @@ func (s *CSVSerializer) Serialize(data PivotData) error {
 		}
 		if err := lbeWriter.Write(record); err != nil {
 			return err
+		}
+		processed++
+		if onProgress != nil {
+			onProgress(processed, totalItems)
 		}
 	}
 	lbeWriter.Flush()

@@ -45,7 +45,7 @@ func TestQueryPivotData(t *testing.T) {
 	}
 
 	// 5. Test QueryPivotData
-	pivotData, err := QueryPivotData(db, config)
+	pivotData, err := QueryPivotData(db, config, nil)
 	if err != nil {
 		t.Fatalf("QueryPivotData returned error: %v", err)
 	}
@@ -126,7 +126,7 @@ func TestQueryPivotDataRealistic(t *testing.T) {
 	}
 
 	// 5. Test QueryPivotData
-	pivotData, err := QueryPivotData(db, config)
+	pivotData, err := QueryPivotData(db, config, nil)
 	if err != nil {
 		t.Fatalf("QueryPivotData returned error: %v", err)
 	}

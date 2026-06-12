@@ -1,6 +1,6 @@
 {
-  "csv_output_name": "users_export.csv",
-  "database": "testdb",
+  "csv_base_name": "test.csv",
+  "database": "test",
   "host": "localhost",
   "ids_to_fieds": {
     "bottom": "Bottom",

@@ -12,7 +12,7 @@ type Config struct {
 	Password           string              `json:"password"`
 	Database           string              `json:"database"`
 	Table              string              `json:"table"`
-	CSVOutputName      string              `json:"csv_output_name"`
+	CSVBaseName        string              `json:"csv_base_name"`
 	IdsToFields        map[string]string   `json:"ids_to_fieds"`
 	PostTypeToMetaKeys map[string][]string `json:"post_type_to_meta_keys"`
 }
